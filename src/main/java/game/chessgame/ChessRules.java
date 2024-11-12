@@ -17,28 +17,6 @@ class ChessRules {
         this.player = player;
     }
 
-    public boolean checkMate(String pieceColor, String piece, int row, int col) {
-        int[][] possibleMoves = switch(piece){
-            case "bishop" -> chessPiece.Bishop(row, col, top, bottom, pieceColor, player);
-            case "rook" -> chessPiece.Rook(row, col, top, bottom, pieceColor, player);
-            case "knight" -> chessPiece.Knight(row, col, top, bottom, pieceColor, player);
-            case "queen" -> chessPiece.Queen(row, col, top, bottom, pieceColor, player);
-            default -> chessPiece.Pawn(row, col, player, top, bottom, pieceColor);
-        };
-        int[] kingPos;
-        String[][] pos = (player.equals(pieceColor))? top: bottom;
-        kingPos = findKing(pos);
-        if (kingPos[0] == -1){ return false; }
-        for (int[] move : possibleMoves) {
-            if (move[0] == kingPos[0] && move[1] == kingPos[1]) {
-                isCheck = true;
-                checkPos[0] = row;
-                checkPos[1] = col;
-                return true;
-            }
-        }
-        return false;
-    }
 
     public int[] findKing(String[][] opponent) {
         for (int i = 0; i < opponent.length; i++) {
@@ -49,16 +27,6 @@ class ChessRules {
             }
         }
         return new int[]{-1};
-    }
-
-    public boolean isCheckmate(int[][] moves, int row, int col){
-        if (isCheck){
-            if (checkPos[0] == row && checkPos[1] == col) { return false;}
-        }
-        for (int[] move : moves){
-            if (move[0] == row && move[1] == col) { return false;}
-        }
-        return true;
     }
 
     public boolean potentialCheckMate (String pieceColor, int pieceRow, int pieceCol, int oldRow, int oldCol){
