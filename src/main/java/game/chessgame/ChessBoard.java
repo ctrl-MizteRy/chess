@@ -200,7 +200,7 @@ public class ChessBoard extends Application {
             if (checkmate) {
                 checkmate = rules.isCheckmate(checkMove, row, col);
             }
-            if (!checkmate) {
+            if (!checkmate && !rules.potentialCheckMate(color, row, col, oldRow, oldCol)) {
                 if (destinationNodes > 1) {
                     if (firstMove) {
                         top[row][col] = "";
