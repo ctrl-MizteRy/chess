@@ -5,7 +5,7 @@ class ChessRules {
     private String[][] bottom;
     private String player;
     private boolean isCheck = false;
-    private int[] checkPos = new int[2];
+    private final int[] checkPos = new int[2];
     private final ChessPieces chessPiece = new ChessPieces();
 
     public void setPosition(String[][]top, String[][]bottom) {
@@ -26,28 +26,15 @@ class ChessRules {
             default -> chessPiece.Pawn(row, col, player, top, bottom, pieceColor);
         };
         int[] kingPos;
-        if (player.equals(pieceColor)) {
-            kingPos = findKing(top);
-            if (kingPos[0] == -1){ return false; }
-            for (int[] move : possibleMoves) {
-                if (move[0] == kingPos[0] && move[1] == kingPos[1]) {
-                    isCheck = true;
-                    checkPos[0] = row;
-                    checkPos[1] = col;
-                    return true;
-                }
-            }
-        }
-        else{
-            kingPos = findKing(bottom);
-            if (kingPos[0] == -1){ return false; }
-            for (int[] move : possibleMoves) {
-                if (move[0] == kingPos[0] && move[1] == kingPos[1]) {
-                    isCheck = true;
-                    checkPos[0] = row;
-                    checkPos[1] = col;
-                    return true;
-                }
+        String[][] pos = (player.equals(pieceColor))? top: bottom;
+        kingPos = findKing(pos);
+        if (kingPos[0] == -1){ return false; }
+        for (int[] move : possibleMoves) {
+            if (move[0] == kingPos[0] && move[1] == kingPos[1]) {
+                isCheck = true;
+                checkPos[0] = row;
+                checkPos[1] = col;
+                return true;
             }
         }
         return false;
