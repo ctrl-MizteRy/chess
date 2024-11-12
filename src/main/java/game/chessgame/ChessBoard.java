@@ -197,10 +197,7 @@ public class ChessBoard extends Application {
         StackPane destination = (StackPane) board.getChildren().get((row * 8) + col);
         int destinationNodes = destination.getChildren().size();
         if (getMoves(oldRow, oldCol, row, col, chessPiece, color)) {
-            if (checkmate) {
-                checkmate = rules.isCheckmate(checkMove, row, col);
-            }
-            if (!checkmate && !rules.potentialCheckMate(color, row, col, oldRow, oldCol)) {
+            if (!rules.potentialCheckMate(color, row, col, oldRow, oldCol)) {
                 if (destinationNodes > 1) {
                     if (firstMove) {
                         top[row][col] = "";
@@ -232,10 +229,6 @@ public class ChessBoard extends Application {
                 }
                 firstMove = !firstMove;
                 secondMove = !secondMove;
-                if (rules.checkMate(color, chessPiece, row, col)) {
-                    checkmate = true;
-                    checkMove = possibleMoves(row, col, chessPiece, color);
-                }
             }
         }
         img.setLayoutX(0);
