@@ -54,14 +54,10 @@ class ChessRules {
                 oppSide[i] = java.util.Arrays.copyOf(bottom[i], 8);
             }
         }
-        if (player.equals(pieceColor)) {
-            side[pieceRow][pieceCol] = side[oldRow][oldCol];
-            side[oldRow][oldCol] = "";
-        }
-        else{
-            oppSide[pieceRow][pieceCol] = oppSide[oldRow][oldCol];
-            oppSide[oldRow][oldCol] = "";
-        }
+
+        side[pieceRow][pieceCol] = side[oldRow][oldCol];
+        side[oldRow][oldCol] = "";
+
         int[] kingPos = findKing(side);
         for (int[] move : crossMoves) {
             int row = kingPos[0];
