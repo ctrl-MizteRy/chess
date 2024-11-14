@@ -41,16 +41,7 @@ class ChessRules {
     protected boolean potentialCheckMate (String pieceColor, int pieceRow, int pieceCol, int oldRow, int oldCol){
         String[][] side = new String[8][];
         String[][] oppSide = new String[8][];
-        for (int i = 0; i < 8; i++){
-            if (player.equals(pieceColor)){
-                side[i] = java.util.Arrays.copyOf(bottom[i], 8);
-                oppSide[i] = java.util.Arrays.copyOf(top[i], 8);
-            }
-            else{
-                side[i] = java.util.Arrays.copyOf(top[i], 8);
-                oppSide[i] = java.util.Arrays.copyOf(bottom[i], 8);
-            }
-        }
+        setSide(side, oppSide,top, bottom, pieceColor, player);
 
         side[pieceRow][pieceCol] = side[oldRow][oldCol];
         side[oldRow][oldCol] = "";
@@ -117,5 +108,18 @@ class ChessRules {
             }
         }
         return false;
+    }
+
+    protected void setSide (String[][] side, String[][] oppSide, String[][]top, String[][] bottom, String pieceColor, String player){
+        for (int i = 0; i < 8; i++){
+            if (player.equals(pieceColor)){
+                side[i] = java.util.Arrays.copyOf(bottom[i], 8);
+                oppSide[i] = java.util.Arrays.copyOf(top[i], 8);
+            }
+            else{
+                side[i] = java.util.Arrays.copyOf(top[i], 8);
+                oppSide[i] = java.util.Arrays.copyOf(bottom[i], 8);
+            }
+        }
     }
 }

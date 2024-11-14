@@ -179,16 +179,7 @@ class ChessPieces {
         String[][] side = new String [8][8];
         String[][] oppSide = new String [8][8];
         ChessRules rules = new ChessRules();
-        for (int i = 0; i < 8; i++){
-            if (player.equals(pieceColor)){
-                side[i] = java.util.Arrays.copyOf(bottom[i], 8);
-                oppSide[i] = java.util.Arrays.copyOf(top[i], 8);
-            }
-            else{
-                side[i] = java.util.Arrays.copyOf(top[i], 8);
-                oppSide[i] = java.util.Arrays.copyOf(bottom[i], 8);
-            }
-        }
+        rules.setSide(side, oppSide, top, bottom, pieceColor, player);
         if (player.equals("white") && side[7][7].equals("rook")){
             for (int i = 6; i > 4; i--){
                 if (rules.potentialCastling(side, oppSide, 7, i)) { return false;}
