@@ -26,8 +26,6 @@ public class ChessBoard extends Application {
     private boolean firstMove = true, secondMove = false;
     private String player;
     private final ChessRules rules = new ChessRules();
-    private boolean checkmate = false;
-    private int[][] checkMove;
     private final String[][] top = {
             {"rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"},
             {"pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn", "pawn"},

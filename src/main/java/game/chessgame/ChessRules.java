@@ -7,18 +7,30 @@ class ChessRules {
     private boolean isCheck = false;
     private final int[] checkPos = new int[2];
     private final ChessPieces chessPiece = new ChessPieces();
+    private final int[][] plusMoves = {
+            {0,1},{0, -1},
+            {1,0}, {-1,0}
+    };
+    private final int[][] crossMoves = {
+            {1,1}, {1, -1},
+            {-1,1}, {-1,-1}
+    };
+    private final int[][] knightMoves = {
+            {1, 2}, {2, 1}, {1, -2}, {2, -1},
+            {-1, 2}, {-2, 1}, {-1, -2}, {-2, -1},
+    };
 
-    public void setPosition(String[][]top, String[][]bottom) {
+    protected void setPosition(String[][]top, String[][]bottom) {
         this.top = top;
         this.bottom = bottom;
     }
 
-    public void setPlayer(String player) {
+    protected void setPlayer(String player) {
         this.player = player;
     }
 
 
-    public int[] findKing(String[][] opponent) {
+    protected int[] findKing(String[][] opponent) {
         for (int i = 0; i < opponent.length; i++) {
             for (int j = 0; j < opponent[i].length; j++) {
                 if (opponent[i][j].equals("king")) {
@@ -29,19 +41,7 @@ class ChessRules {
         return new int[]{-1};
     }
 
-    public boolean potentialCheckMate (String pieceColor, int pieceRow, int pieceCol, int oldRow, int oldCol){
-        int[][] plusMoves = {
-                {0,1},{0, -1},
-                {1,0}, {-1,0}
-        };
-        int[][] crossMoves = {
-                {1,1}, {1, -1},
-                {-1,1}, {-1,-1}
-        };
-        int[][] knightMoves = {
-            {1, 2}, {2, 1}, {1, -2}, {2, -1},
-            {-1, 2}, {-2, 1}, {-1, -2}, {-2, -1},
-        };
+    protected boolean potentialCheckMate (String pieceColor, int pieceRow, int pieceCol, int oldRow, int oldCol){
         String[][] side = new String[8][];
         String[][] oppSide = new String[8][];
         for (int i = 0; i < 8; i++){
@@ -59,9 +59,41 @@ class ChessRules {
         side[oldRow][oldCol] = "";
 
         int[] kingPos = findKing(side);
+
+        if (findCrossMoves(side, oppSide, kingPos[0], kingPos[1])) {return true;}
+        else if (findPlusMoves(side, oppSide, kingPos[0], kingPos[1])){ return true;}
+        else return findKnightMoves(oppSide, kingPos[0], kingPos[1]);
+    }
+
+    protected boolean potentialCastling (String[][] side, String[][] oppSide, int row, int col){
+        if (findPlusMoves(side, oppSide, row, col)){ return true;}
+        else if (findCrossMoves(side, oppSide, row, col)){ return true;}
+        else return findKnightMoves(oppSide, row, col);
+    }
+
+    protected boolean findPlusMoves(String[][] side, String[][] oppSide, int row, int col){
+        for (int[] move : plusMoves){
+            int newRow = row;
+            int newCol = col;
+            while (true){
+                newRow += move[0];
+                newCol += move[1];
+                if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                    if (!side[newRow][newCol].isEmpty()) {break;}
+                    else if(!oppSide[newRow][newCol].isEmpty()) {
+                        if (oppSide[newRow][newCol].equals("queen") || oppSide[newRow][newCol].equals("rook")) {return true;}
+                    }
+                }
+                else {break;}
+            }
+        }
+        return false;
+    }
+
+    protected boolean findCrossMoves(String[][] side, String[][] oppSide, int oldRow, int oldCol){
         for (int[] move : crossMoves) {
-            int row = kingPos[0];
-            int col = kingPos[1];
+            int row = oldRow;
+            int col = oldCol;
             while (true){
                 row += move[0];
                 col += move[1];
@@ -74,24 +106,13 @@ class ChessRules {
                 else {break;}
             }
         }
-        for (int[] move : plusMoves){
-            int row = kingPos[0];
-            int col = kingPos[1];
-            while (true){
-                row += move[0];
-                col += move[1];
-                if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-                    if (!side[row][col].isEmpty()) {break;}
-                    else if(!oppSide[row][col].isEmpty()) {
-                        if (oppSide[row][col].equals("queen") || oppSide[row][col].equals("rook")) {return true;}
-                    }
-                }
-                else {break;}
-            }
-        }
+        return false;
+    }
+
+    protected boolean findKnightMoves( String[][] oppSide, int oldRow, int oldCol){
         for (int[] move : knightMoves) {
-            int row = kingPos[0] + move[0];
-            int col = kingPos[1] + move[1];
+            int row = oldRow + move[0];
+            int col = oldCol + move[1];
             if (row >= 0 && row < 8 && col >= 0 && col < 8) {
                 if (!oppSide[row][col].isEmpty()) {
                     if (oppSide[row][col].equals("knight")) {return true;}

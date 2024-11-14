@@ -2,7 +2,7 @@ package game.chessgame;
 
 class ChessPieces {
     private int index = 0;
-    public int[][] Pawn(int row, int col, String player, String[][] top, String[][] bottom, String pieceColor) {
+    protected int[][] Pawn(int row, int col, String player, String[][] top, String[][] bottom, String pieceColor) {
         int[][] moves = new int[4][2];
         int index = 0;
         if (player.equals(pieceColor) && row == 6){
@@ -52,7 +52,7 @@ class ChessPieces {
         return resize(moves, index);
     }
 
-    public int[][] Knight(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
+    protected int[][] Knight(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
         int[][] moves = new int[8][2];
         index = 0;
         int[][] possibleMoves = {
@@ -80,7 +80,7 @@ class ChessPieces {
         return moves;
     }
 
-    public int[][] Bishop(int row, int col, String[][]top, String[][] bottom, String pieceColor, String player) {
+    protected int[][] Bishop(int row, int col, String[][]top, String[][] bottom, String pieceColor, String player) {
         int[][] moves = new int[13][2];
         int moveB = 13;
         int[][] possibleMoves = {
@@ -90,7 +90,7 @@ class ChessPieces {
         return moves;
     }
 
-    public int[][] Rook(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
+    protected int[][] Rook(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
         int[][] moves = new int[14][2];
         int moveR = 14;
         int[][] possibleMoves = {
@@ -100,7 +100,7 @@ class ChessPieces {
         return moves;
     }
 
-    public int[][] King(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
+    protected int[][] King(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
         int[][] moves = new int[8][2];
         index = 0;
         int[][] possibleMoves = {
@@ -125,7 +125,7 @@ class ChessPieces {
         return resize(moves, index);
     }
 
-    public int[][] Queen(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
+    protected int[][] Queen(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
         int[][] moves = new int[27][2];
         int moveQ = 27;
         int[][] possibleMoves = {
@@ -137,7 +137,7 @@ class ChessPieces {
         return moves;
     }
 
-    public int[][] resize(int[][] moves, int len) {
+    protected int[][] resize(int[][] moves, int len) {
         if (len == 0){
             moves = new int[1][2];
             moves[0] = new int[]{-1, 0};
@@ -150,7 +150,7 @@ class ChessPieces {
         }
     }
 
-    public int[][] getMoves(int row, int col, int[][] moves, int[][] possibleMoves, String[][] top, String[][] bottom, String pieceColor, String player, int maxMove) {
+    protected int[][] getMoves(int row, int col, int[][] moves, int[][] possibleMoves, String[][] top, String[][] bottom, String pieceColor, String player, int maxMove) {
         index = 0;
         for (int[] position : possibleMoves) {
             int newRow = row, newCol = col;
@@ -173,6 +173,35 @@ class ChessPieces {
             return resize(moves, index);
         }
         return moves;
+    }
+
+    protected boolean kingSideCastle(String[][] bottom, String[][] top, int row, int col, String player, String pieceColor) {
+        String[][] side = new String [8][8];
+        String[][] oppSide = new String [8][8];
+        ChessRules rules = new ChessRules();
+        for (int i = 0; i < 8; i++){
+            if (player.equals(pieceColor)){
+                side[i] = java.util.Arrays.copyOf(bottom[i], 8);
+                oppSide[i] = java.util.Arrays.copyOf(top[i], 8);
+            }
+            else{
+                side[i] = java.util.Arrays.copyOf(top[i], 8);
+                oppSide[i] = java.util.Arrays.copyOf(bottom[i], 8);
+            }
+        }
+        if (player.equals("white") && side[7][7].equals("rook")){
+            for (int i = 6; i > 4; i--){
+                if (rules.potentialCastling(side, oppSide, 7, i)) { return false;}
+            }
+        }
+        else {
+            if (side[7][0].equals("rook")){
+                for (int i = 1; i < 3; i ++){
+                    if (rules.potentialCastling(side, oppSide, 7, i)) {return false;}
+                }
+            }
+        }
+        return true;
     }
 
 }
