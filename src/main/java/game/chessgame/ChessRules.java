@@ -4,9 +4,6 @@ class ChessRules {
     private String[][] top;
     private String[][] bottom;
     private String player;
-    private boolean isCheck = false;
-    private final int[] checkPos = new int[2];
-    private final ChessPieces chessPiece = new ChessPieces();
     private final int[][] plusMoves = {
             {0,1},{0, -1},
             {1,0}, {-1,0}
