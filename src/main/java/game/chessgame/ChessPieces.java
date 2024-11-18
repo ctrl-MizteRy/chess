@@ -100,8 +100,8 @@ class ChessPieces {
         return moves;
     }
 
-    protected int[][] King(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
-        int[][] moves = new int[8][2];
+    protected int[][] King(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player, boolean kingOrigiPos, boolean kingSide, boolean queenSide) {
+        int[][] moves = new int[10][2];
         index = 0;
         int[][] possibleMoves = {
                 {1,1}, {1, -1}, {1, 0},
@@ -119,6 +119,26 @@ class ChessPieces {
                 else if (!pieceColor.equals(player) && top[newRow][newCol].isEmpty()){
                     moves[index] = new int[]{newRow, newCol};
                     index++;
+                }
+            }
+        }
+
+        ChessRules rules = new ChessRules();
+        if (kingOrigiPos && kingSide) {
+            if (kingSideCastle(top, bottom, player, pieceColor, rules)) {
+                if (player.equals("white")) {
+                    moves[index++] = (player.equals(pieceColor)) ? new int[]{7, 6} : new int[]{0, 6};
+                } else {
+                    moves[index++] = (player.equals(pieceColor)) ? new int[]{7, 1} : new int[]{0, 1};
+                }
+            }
+        }
+        if (kingOrigiPos && queenSide) {
+            if (queenSideCastle(top, bottom, player, pieceColor, rules)) {
+                if (player.equals("white")) {
+                    moves[index++] = (player.equals(pieceColor)) ? new int[]{7, 2} : new int[]{0, 2};
+                } else {
+                    moves[index++] = (player.equals(pieceColor)) ? new int[]{7, 5} : new int[]{0, 5};
                 }
             }
         }
@@ -175,21 +195,33 @@ class ChessPieces {
         return moves;
     }
 
-    protected boolean kingSideCastle(String[][] bottom, String[][] top, int row, int col, String player, String pieceColor) {
-        String[][] side = new String [8][8];
-        String[][] oppSide = new String [8][8];
-        ChessRules rules = new ChessRules();
-        rules.setSide(side, oppSide, top, bottom, pieceColor, player);
-        if (player.equals("white") && side[7][7].equals("rook")){
-            for (int i = 6; i > 4; i--){
-                if (rules.potentialCastling(side, oppSide, 7, i)) { return false;}
+    protected boolean kingSideCastle(String[][] oppSide, String[][] side, String player, String pieceColor, ChessRules rules) {
+        int n = (player.equals("white"))? 5 : 1;
+        int m = (player.equals("white"))? 7 : 3;
+        for (int i = n; i < m; i++) {
+            if (player.equals(pieceColor)) {
+                if (!side[7][i].isEmpty()) { return false;}
+                else if (rules.potentialCastling(side, oppSide, 7, i)) { return false;}
+            }
+            else{
+                if (!oppSide[0][i].isEmpty()) { return false;}
+                else if (rules.potentialCastling(side, oppSide, 0, i)) { return false;}
             }
         }
-        else {
-            if (side[7][0].equals("rook")){
-                for (int i = 1; i < 3; i ++){
-                    if (rules.potentialCastling(side, oppSide, 7, i)) {return false;}
-                }
+        return true;
+    }
+
+    protected boolean queenSideCastle(String[][] oppSide, String[][] side, String player, String pieceColor, ChessRules rules){
+        int n = (player.equals("white"))? 1 : 4;
+        int m = (player.equals("white"))? 4 : 7;
+        for (int i = n; i < m; i++) {
+            if (player.equals(pieceColor)) {
+                if (!side[7][i].isEmpty()) { return false;}
+                else if (rules.potentialCastling(side, oppSide, 7, i)) { return false;}
+            }
+            else {
+                if (!oppSide[0][i].isEmpty()) { return false;}
+                else if (rules.potentialCastling(side, oppSide, 0, i)) { return false;}
             }
         }
         return true;

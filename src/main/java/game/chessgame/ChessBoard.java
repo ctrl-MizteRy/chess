@@ -47,7 +47,8 @@ public class ChessBoard extends Application {
             {"rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"},
     };
     private Stage primaryStage;
-    private Pane pane;
+    protected Pane pane;
+    protected boolean playerSideKingOrigPos = true, oppSideKingOrigPos = true, playerRKing = true, playerRQueen = false, oppRKing = true, oppRQueen = true;
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -225,6 +226,60 @@ public class ChessBoard extends Application {
                         top[oldRow][oldCol] = "";
                     }
                 }
+                if (chessPiece.equals("king") && (playerSideKingOrigPos|| oppSideKingOrigPos)){
+                    if (player.equals(color)) {
+                        if (color.equals("white")){
+                            if (row == 7){
+                                if (col == 2){
+                                    bottom[7][3] = bottom[7][0];
+                                    bottom[7][0] = "";
+                                }
+                                else if (col == 6){
+                                    bottom[7][5] = bottom[7][7];
+                                    bottom[7][7] = "";
+                                }
+                            }
+                        }
+                        else{
+                            if (row == 7){
+                                if (col == 1){
+                                    bottom[7][2] = bottom[7][0];
+                                    bottom[7][0] = "";
+                                }
+                                else if (col == 5){
+                                    bottom[7][4] = bottom[7][7];
+                                    bottom[7][7] = "";
+                                }
+                            }
+                        }
+                        playerSideKingOrigPos = false;
+                    }
+                    else{
+                        oppSideKingOrigPos = false;
+                    }
+                }
+                if (chessPiece.equals("rook")){
+                    if (player.equals("white")){
+                        if (player.equals(color)){
+                            if (oldRow == 7 && oldCol == 0){ playerRQueen = false;}
+                            else if (oldRow == 7 && oldCol == 7){ playerRKing = false;}
+                        }
+                        else{
+                            if (oldRow == 0 && oldCol == 0){ oppRQueen = false;}
+                            else if (oldRow == 0 && oldCol == 7){ oppRKing = false;}
+                        }
+                    }
+                    if (player.equals("black")){
+                        if (player.equals(color)){
+                            if (oldRow == 7 && oldCol == 0){ playerRKing = false;}
+                            else if (oldRow == 7 && oldCol == 7){ playerRQueen = false;}
+                        }
+                        else{
+                            if (oldRow == 0 && oldCol == 0){ oppRKing = false;}
+                            else if (oldRow == 0 && oldCol == 7){ oppRQueen = false;}
+                        }
+                    }
+                }
                 firstMove = !firstMove;
                 secondMove = !secondMove;
             }
@@ -239,7 +294,6 @@ public class ChessBoard extends Application {
         return checkMoves(moves, row, col);
     }
 
-
     private boolean checkMoves(int[][] moves, int row, int col){
         for (int[] move : moves) {
             if (move[0] == row && move[1] == col) { return true;}
@@ -249,8 +303,11 @@ public class ChessBoard extends Application {
     }
 
     private int[][] possibleMoves(int row, int col, String piece, String color){
+        boolean kingOrigiPos = (player.equals(color))? playerSideKingOrigPos : oppSideKingOrigPos;
+        boolean kingSideCastle = (player.equals(color))? playerRKing : oppRKing;
+        boolean queenSideCastle = (player.equals(color))? playerRQueen : oppRQueen;
         return switch (piece) {
-            case "king" -> chessMoves.King(row, col, top, bottom, color, player);
+            case "king" -> chessMoves.King(row, col, top, bottom, color, player, kingOrigiPos, kingSideCastle, queenSideCastle);
             case "knight" -> chessMoves.Knight(row, col, top, bottom, color, player);
             case "bishop" -> chessMoves.Bishop(row, col, top, bottom, color, player);
             case "rook" -> chessMoves.Rook(row, col, top, bottom, color, player);
