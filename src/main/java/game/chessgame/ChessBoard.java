@@ -54,6 +54,7 @@ public class ChessBoard extends Application {
         this.primaryStage = primaryStage;
         Scene scene = firstScene();
         primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
         primaryStage.setTitle("Chess Board");
         primaryStage.show();
     }
@@ -90,6 +91,7 @@ public class ChessBoard extends Application {
         rules.setPosition(top, bottom);
         Scene scene = new Scene(pane, 700, 700);
         primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
     }
 
     private void checkSide(String player){
