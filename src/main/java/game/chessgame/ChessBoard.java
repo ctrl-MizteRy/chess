@@ -48,7 +48,7 @@ public class ChessBoard extends Application {
     };
     private Stage primaryStage;
     protected Pane pane;
-    protected boolean playerSideKingOrigPos = true, oppSideKingOrigPos = true, playerRKing = true, playerRQueen = false, oppRKing = true, oppRQueen = true;
+    protected boolean playerSideKingOrigPos = true, oppSideKingOrigPos = true, playerRKing = true, playerRQueen = true, oppRKing = true, oppRQueen = true;
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -226,60 +226,8 @@ public class ChessBoard extends Application {
                         top[oldRow][oldCol] = "";
                     }
                 }
-                if (chessPiece.equals("king") && (playerSideKingOrigPos|| oppSideKingOrigPos)){
-                    if (player.equals(color)) {
-                        if (color.equals("white")){
-                            if (row == 7){
-                                if (col == 2){
-                                    bottom[7][3] = bottom[7][0];
-                                    bottom[7][0] = "";
-                                }
-                                else if (col == 6){
-                                    bottom[7][5] = bottom[7][7];
-                                    bottom[7][7] = "";
-                                }
-                            }
-                        }
-                        else{
-                            if (row == 7){
-                                if (col == 1){
-                                    bottom[7][2] = bottom[7][0];
-                                    bottom[7][0] = "";
-                                }
-                                else if (col == 5){
-                                    bottom[7][4] = bottom[7][7];
-                                    bottom[7][7] = "";
-                                }
-                            }
-                        }
-                        playerSideKingOrigPos = false;
-                    }
-                    else{
-                        oppSideKingOrigPos = false;
-                    }
-                }
-                if (chessPiece.equals("rook")){
-                    if (player.equals("white")){
-                        if (player.equals(color)){
-                            if (oldRow == 7 && oldCol == 0){ playerRQueen = false;}
-                            else if (oldRow == 7 && oldCol == 7){ playerRKing = false;}
-                        }
-                        else{
-                            if (oldRow == 0 && oldCol == 0){ oppRQueen = false;}
-                            else if (oldRow == 0 && oldCol == 7){ oppRKing = false;}
-                        }
-                    }
-                    if (player.equals("black")){
-                        if (player.equals(color)){
-                            if (oldRow == 7 && oldCol == 0){ playerRKing = false;}
-                            else if (oldRow == 7 && oldCol == 7){ playerRQueen = false;}
-                        }
-                        else{
-                            if (oldRow == 0 && oldCol == 0){ oppRKing = false;}
-                            else if (oldRow == 0 && oldCol == 7){ oppRQueen = false;}
-                        }
-                    }
-                }
+                castling(player, color, chessPiece, oldRow, oldCol, row, col);
+
                 firstMove = !firstMove;
                 secondMove = !secondMove;
             }
@@ -289,6 +237,94 @@ public class ChessBoard extends Application {
         startGame();
     }
 
+    private void castling (String player, String color, String chessPiece, int oldRow, int oldCol, int row, int col){
+        if (chessPiece.equals("king") && (playerSideKingOrigPos|| oppSideKingOrigPos)){
+            if (player.equals(color)) {
+                if (color.equals("white")){
+                    if (row == 7){
+                        if (col == 2){
+                            bottom[7][3] = bottom[7][0];
+                            bottom[7][0] = "";
+                            playerRQueen = false;
+                        }
+                        else if (col == 6){
+                            bottom[7][5] = bottom[7][7];
+                            bottom[7][7] = "";
+                            playerRKing = false;
+                        }
+                    }
+                }
+                else{
+                    if (row == 7){
+                        if (col == 1){
+                            bottom[7][2] = bottom[7][0];
+                            bottom[7][0] = "";
+                            playerRKing = false;
+                        }
+                        else if (col == 5){
+                            bottom[7][4] = bottom[7][7];
+                            bottom[7][7] = "";
+                            playerRQueen = false;
+                        }
+                    }
+                }
+                playerSideKingOrigPos = false;
+            }
+            else{
+                if (color.equals("white")){
+                    if (row == 0){
+                        if (col == 1){
+                            top[0][2] = top[0][0];
+                            top[0][0] = "";
+                            oppRQueen = false;
+                        }
+                        else if (col == 5){
+                            top[0][4] = top[0][7];
+                            top[0][7] = "";
+                            oppRKing = false;
+                        }
+                    }
+                }
+                else{
+                    if (row == 0){
+                        if (col == 2){
+                            top[0][3] = top[0][0];
+                            top[0][0] = "";
+                            oppRKing = false;
+                        }
+                        else if (col == 6){
+                            top[0][5] = top[0][7];
+                            top[0][7] = "";
+                            oppRQueen = false;
+                        }
+                    }
+                }
+                oppSideKingOrigPos = false;
+            }
+        }
+        if (chessPiece.equals("rook")){
+            if (player.equals("white")){
+                if (player.equals(color)){
+                    if (oldRow == 7 && oldCol == 0){ playerRQueen = false;}
+                    else if (oldRow == 7 && oldCol == 7){ playerRKing = false;}
+                }
+                else{
+                    if (oldRow == 0 && oldCol == 0){ oppRQueen = false;}
+                    else if (oldRow == 0 && oldCol == 7){ oppRKing = false;}
+                }
+            }
+            if (player.equals("black")){
+                if (player.equals(color)){
+                    if (oldRow == 7 && oldCol == 0){ playerRKing = false;}
+                    else if (oldRow == 7 && oldCol == 7){ playerRQueen = false;}
+                }
+                else{
+                    if (oldRow == 0 && oldCol == 0){ oppRKing = false;}
+                    else if (oldRow == 0 && oldCol == 7){ oppRQueen = false;}
+                }
+            }
+        }
+    }
     private boolean getMoves(int oldRow, int oldCol, int row, int col, String piece, String color){
         int[][] moves = possibleMoves(oldRow, oldCol, piece, color);
         return checkMoves(moves, row, col);

@@ -205,7 +205,7 @@ class ChessPieces {
             }
             else{
                 if (!oppSide[0][i].isEmpty()) { return false;}
-                else if (rules.potentialCastling(side, oppSide, 0, i)) { return false;}
+                else if (rules.potentialCastling(oppSide, side, 0, i)) { return false;}
             }
         }
         return true;
@@ -221,7 +221,7 @@ class ChessPieces {
             }
             else {
                 if (!oppSide[0][i].isEmpty()) { return false;}
-                else if (rules.potentialCastling(side, oppSide, 0, i)) { return false;}
+                else if (rules.potentialCastling(oppSide, side, 0, i)) { return false;}
             }
         }
         return true;
