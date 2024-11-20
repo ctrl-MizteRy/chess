@@ -24,7 +24,7 @@ import java.io.FileNotFoundException;
 public class ChessBoard extends Application {
     private final ChessPieces chessMoves = new ChessPieces();
     private boolean firstMove = true, secondMove = false;
-    private String player;
+    private String player, opp;
     private final ChessRules rules = new ChessRules();
     private final String[][] top = {
             {"rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"},
@@ -70,12 +70,14 @@ public class ChessBoard extends Application {
         Button black = new Button("Black");
         black.setOnAction(event->{
             player = "black";
+            opp = "white";
             checkSide(player);
             startGame();
         });
         Button white = new Button("White");
         white.setOnAction(event ->{
             player = "white";
+            opp = "black";
             startGame();
         });
         firstScene.add(white, 0, 1);
@@ -89,7 +91,8 @@ public class ChessBoard extends Application {
         pane = getBoard();
         rules.setPlayer(player);
         rules.setPosition(top, bottom);
-        Scene scene = new Scene(pane, 700, 700);
+        checkPawn();
+        Scene scene = new Scene(pane, 950, 950);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
     }
@@ -124,7 +127,8 @@ public class ChessBoard extends Application {
                     color += " " + chessPiece;
                     Image image = getChessPiece(row, col);
                     ImageView piece = new ImageView(image);
-                    piece.setFitWidth(50); piece.setFitHeight(50);
+                    piece.setPickOnBounds(true);
+                    piece.setFitWidth(65); piece.setFitHeight(65);
                     Label pieceColor = new Label(color);
                     pieceColor.setVisible(false);
                     pane.getChildren().addAll(piece, pieceColor);
@@ -192,8 +196,8 @@ public class ChessBoard extends Application {
     private void makeMove(MouseEvent event, GridPane board, StackPane piece, int oldRow, int oldCol, ImageView img, String chessPiece, String color){
         double sceneX = event.getSceneX();
         double sceneY = event.getSceneY() + 35;
-        int col = (int) Math.floor(sceneX / 75) - 1;
-        int row = (int) Math.floor(sceneY / 75) - 1 ;
+        int col = (int) Math.floor(sceneX / 100) - 1;
+        int row = (int) Math.floor(sceneY / 100) - 1 ;
 
         StackPane destination = (StackPane) board.getChildren().get((row * 8) + col);
         int destinationNodes = destination.getChildren().size();
@@ -229,7 +233,6 @@ public class ChessBoard extends Application {
                     }
                 }
                 castling(player, color, chessPiece, oldRow, oldCol, row, col);
-
                 firstMove = !firstMove;
                 secondMove = !secondMove;
             }
@@ -239,6 +242,86 @@ public class ChessBoard extends Application {
         startGame();
     }
 
+    private void checkPawn(){
+        for (int i = 0; i < 8; i++){
+            if (!firstMove){
+                if (bottom[0][i].equals("pawn")){
+                    checkPromotion(player, 0, i);
+                }
+            }
+            else{
+                if (top[7][i].equals("pawn")){
+                    checkPromotion(opp, 7, i);
+                }
+            }
+        }
+    }
+    private void checkPromotion( String color, int row, int col){
+        if (player.equals(color)){
+            if (row == 0){
+                getPromotion(row, col, color);
+            }
+        }
+        else {
+            if (row == 7){
+                getPromotion(row, col, color);
+            }
+        }
+    }
+
+    private void getPromotion(int row,int col, String color){
+        StackPane piece = (StackPane) pane.getChildren().get((row * 8) + col);
+        GridPane promotionPieces = promotionPieces(color, row, col);
+        piece.getChildren().add(promotionPieces);
+    }
+
+    private GridPane promotionPieces(String color, int row, int col){
+        GridPane promotion = new GridPane();
+        for (int i = 0; i < 4; i++){
+            StackPane stack = new StackPane();
+            Rectangle rec = new Rectangle(25,25);
+            rec.setFill(Color.TEAL);
+            Image piece = setPromotionImg(i, color);
+            int num = i;
+            ImageView img = new ImageView(piece);
+            img.setFitWidth(25);
+            img.setFitHeight(25);
+            img.setPickOnBounds(true);
+            img.setOnMouseClicked(_-> {
+                    firstMove = !firstMove;
+                    secondMove = !secondMove;
+                    String[][] side = (player.equals(color))? bottom : top;
+                    side[row][col] = switch(num) {
+                        case 0 -> "rook";
+                        case 1 -> "knight";
+                        case 2 -> "bishop";
+                        default -> "queen";
+                    };
+            });
+            stack.getChildren().add(rec);
+            stack.getChildren().add(img);
+            promotion.add(stack, i, 0);
+        }
+        return promotion;
+    }
+
+    private Image setPromotionImg(int i, String color){
+        try {
+            return switch (i) {
+                case 0 ->
+                        (color.equals("white")) ? new Image(new FileInputStream("src/main/ChessPics/wr.png")) : new Image(new FileInputStream("src/main/ChessPics/br.png"));
+                case 1 ->
+                        (color.equals("white")) ? new Image(new FileInputStream("src/main/ChessPics/wkni.png")) : new Image(new FileInputStream("src/main/ChessPics/bkni.png"));
+                case 2 ->
+                        (color.equals("white")) ? new Image(new FileInputStream("src/main/ChessPics/wb.png")) : new Image(new FileInputStream("src/main/ChessPics/bb.png"));
+                default ->
+                        (color.equals("white")) ? new Image(new FileInputStream("src/main/ChessPics/wq.png")) : new Image(new FileInputStream("src/main/ChessPics/bq.png"));
+            };
+        }
+        catch (FileNotFoundException _){
+            return null;
+        }
+    }
     private void castling (String player, String color, String chessPiece, int oldRow, int oldCol, int row, int col){
         if (chessPiece.equals("king") && (playerSideKingOrigPos|| oppSideKingOrigPos)){
             if (player.equals(color)) {
@@ -327,6 +410,7 @@ public class ChessBoard extends Application {
             }
         }
     }
+
     private boolean getMoves(int oldRow, int oldCol, int row, int col, String piece, String color){
         int[][] moves = possibleMoves(oldRow, oldCol, piece, color);
         return checkMoves(moves, row, col);
@@ -356,7 +440,7 @@ public class ChessBoard extends Application {
 
     private StackPane makeBorder(int row, int col){
         StackPane pane = new StackPane();
-        Rectangle rec = new Rectangle(75,75);
+        Rectangle rec = new Rectangle(100,100);
         rec.setStroke(Color.BLACK);
         rec.setFill(Color.TRANSPARENT);
         if ((row + col) % 2 == 0) {

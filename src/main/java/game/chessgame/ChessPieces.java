@@ -5,55 +5,52 @@ class ChessPieces {
     protected int[][] Pawn(int row, int col, String player, String[][] top, String[][] bottom, String pieceColor) {
         int[][] moves = new int[4][2];
         index = 0;
-        if (player.equals(pieceColor) && row == 6){
-            if (bottom[row - 1][col].isEmpty() && top[row - 1][col].isEmpty()) {
-                moves[index++] = new int[]{row - 1, col};
-                if (bottom[row-2][col].isEmpty() && top[row-2][col].isEmpty()) {
-                    moves[index++] = new int[]{row - 2, col};
-                }
-            }
-        }
-        else if (player.equals(pieceColor) && row != 0){
-            if (top[row-1][col].isEmpty() && bottom[row-1][col].isEmpty()) {
-                moves[index++] = new int[]{row - 1, col};
-            }
-        }
-        else if (!player.equals(pieceColor) && row == 1){
-            if (bottom[row+1][col].isEmpty() && top[row+1][col].isEmpty()) {
-                moves[index++] = new int[]{row + 1, col};
-                if (bottom[row+2][col].isEmpty() && top[row+2][col].isEmpty()) {
-                    moves[index++] = new int[]{row + 2, col};
-                }
-            }
-        }
+        if ((player.equals(pieceColor) && row == 0) || !player.equals(pieceColor) && row == 7) { return resize(moves, index);}
         else {
-            if (bottom[row+1][col].isEmpty()) {
-                moves[index++] = new int[]{row + 1, col};
-            }
-        }
-        if (player.equals(pieceColor)){
-            if (col - 1 >= 0  && !top[row-1][col-1].isEmpty()){
-                if (!top[row-1][col+1].isEmpty()){
-                    moves[index++] = new int[] {row-1, col+1};
+            if (player.equals(pieceColor) && row == 6) {
+                if (bottom[row - 1][col].isEmpty() && top[row - 1][col].isEmpty()) {
+                    moves[index++] = new int[]{row - 1, col};
+                    if (bottom[row - 2][col].isEmpty() && top[row - 2][col].isEmpty()) {
+                        moves[index++] = new int[]{row - 2, col};
+                    }
                 }
-                moves[index++] = new int[] {row-1, col-1};
-            }
-            else if (col + 1 <= 7 && !top[row-1][col+1].isEmpty()){
-                moves[index++] =  new int[] {row-1, col+1};
-            }
-        }
-        else{
-            if (col - 1 >= 0 && !bottom[row+1][col-1].isEmpty()){
-                if (!bottom[row+1][col+1].isEmpty()){
-                    moves[index++] = new int[] {row+1, col+1};
+            } else if (player.equals(pieceColor) && row != 0) {
+                if (top[row - 1][col].isEmpty() && bottom[row - 1][col].isEmpty()) {
+                    moves[index++] = new int[]{row - 1, col};
                 }
-                moves[index++] = new int[] {row+1, col-1};
+            } else if (!player.equals(pieceColor) && row == 1) {
+                if (bottom[row + 1][col].isEmpty() && top[row + 1][col].isEmpty()) {
+                    moves[index++] = new int[]{row + 1, col};
+                    if (bottom[row + 2][col].isEmpty() && top[row + 2][col].isEmpty()) {
+                        moves[index++] = new int[]{row + 2, col};
+                    }
+                }
+            } else {
+                if (bottom[row + 1][col].isEmpty()) {
+                    moves[index++] = new int[]{row + 1, col};
+                }
             }
-            else if (col + 1 <= 7 && !bottom[row+1][col+1].isEmpty()){
-                moves[index++] = new int[] {row+1, col+1};
+            if (player.equals(pieceColor)) {
+                if (col - 1 >= 0 && !top[row - 1][col - 1].isEmpty()) {
+                    if (!top[row - 1][col + 1].isEmpty()) {
+                        moves[index++] = new int[]{row - 1, col + 1};
+                    }
+                    moves[index++] = new int[]{row - 1, col - 1};
+                } else if (col + 1 <= 7 && !top[row - 1][col + 1].isEmpty()) {
+                    moves[index++] = new int[]{row - 1, col + 1};
+                }
+            } else {
+                if (col - 1 >= 0 && !bottom[row + 1][col - 1].isEmpty()) {
+                    if (!bottom[row + 1][col + 1].isEmpty()) {
+                        moves[index++] = new int[]{row + 1, col + 1};
+                    }
+                    moves[index++] = new int[]{row + 1, col - 1};
+                } else if (col + 1 <= 7 && !bottom[row + 1][col + 1].isEmpty()) {
+                    moves[index++] = new int[]{row + 1, col + 1};
+                }
             }
+            return resize(moves, index);
         }
-        return resize(moves, index);
     }
 
     protected int[][] Knight(int row, int col, String[][] top, String[][] bottom, String pieceColor, String player) {
