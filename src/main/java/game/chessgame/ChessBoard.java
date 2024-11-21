@@ -295,7 +295,7 @@ public class ChessBoard extends Application {
             img.setFitWidth(25);
             img.setFitHeight(25);
             img.setPickOnBounds(true);
-            img.setOnMouseClicked(_-> {
+            img.setOnMouseClicked(event-> {
                     String[][] side = (player.equals(color))? bottom : top;
                     side[row][col] = switch(num) {
                         case 0 -> "rook";
@@ -324,9 +324,8 @@ public class ChessBoard extends Application {
                 default ->
                         (color.equals("white")) ? new Image(new FileInputStream("src/main/ChessPics/wq.png")) : new Image(new FileInputStream("src/main/ChessPics/bq.png"));
             };
-        }
-        catch (FileNotFoundException _){
-            return null;
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -525,7 +524,7 @@ public class ChessBoard extends Application {
                 }
             }
         }
-        catch (FileNotFoundException _){
+        catch (FileNotFoundException ignored){
 
         }
         return piece;
@@ -591,7 +590,7 @@ public class ChessBoard extends Application {
                 }
             }
         }
-        catch (FileNotFoundException _){
+        catch (FileNotFoundException ignored){
 
         }
         return piece;

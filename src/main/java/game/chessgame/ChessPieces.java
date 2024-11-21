@@ -240,19 +240,28 @@ class ChessPieces {
         int leftCol = pawnCol - 1;
         int rightCol = pawnCol + 1;
         if (player.equals(color)) {
-            if (!top[pawnRow][leftCol].isEmpty() && oppPawns[leftCol]){
-                moves[index++] = new int[] {pawnRow-1, leftCol};
+            if (leftCol >= 0) {
+                if (oppPawns[leftCol] && !top[pawnRow][leftCol].isEmpty()) {
+                    moves[index++] = new int[]{pawnRow - 1, leftCol};
+                }
             }
-            else if (!top[pawnRow][rightCol].isEmpty() && oppPawns[rightCol]){
-                moves[index++] = new int[] {pawnRow-1, rightCol};
+            if (rightCol < 8) {
+                if (oppPawns[rightCol] && !top[pawnRow][rightCol].isEmpty()) {
+                    moves[index++] = new int[]{pawnRow - 1, rightCol};
+                }
             }
+
         }
-        else{
-            if (!bottom[pawnRow][leftCol].isEmpty() && playerPawns[leftCol]){
-                moves[index++] = new int[] {pawnRow+1, leftCol};
+        else {
+            if (leftCol >= 0) {
+                if (playerPawns[leftCol] && !bottom[pawnRow][leftCol].isEmpty()) {
+                    moves[index++] = new int[]{pawnRow + 1, leftCol};
+                }
             }
-            else if (!bottom[pawnRow][rightCol].isEmpty() && playerPawns[rightCol]){
-                moves[index++] = new int[] {pawnRow+1, rightCol};
+            if (rightCol < 8) {
+                if (playerPawns[rightCol] && !bottom[pawnRow][rightCol].isEmpty()) {
+                    moves[index++] = new int[]{pawnRow + 1, rightCol};
+                }
             }
         }
         return resize(moves, index);
