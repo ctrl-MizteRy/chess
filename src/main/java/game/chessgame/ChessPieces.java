@@ -2,8 +2,8 @@ package game.chessgame;
 
 class ChessPieces {
     private int index = 0;
-    protected int[][] Pawn(int row, int col, String player, String[][] top, String[][] bottom, String pieceColor) {
-        int[][] moves = new int[4][2];
+    protected int[][] Pawn(int row, int col, String player, String[][] top, String[][] bottom, String pieceColor, boolean[] playerPawns, boolean[] oppPawns) {
+        int[][] moves = new int[6][2];
         index = 0;
         if ((player.equals(pieceColor) && row == 0) || !player.equals(pieceColor) && row == 7) { return resize(moves, index);}
         else {
@@ -12,17 +12,19 @@ class ChessPieces {
                     moves[index++] = new int[]{row - 1, col};
                     if (bottom[row - 2][col].isEmpty() && top[row - 2][col].isEmpty()) {
                         moves[index++] = new int[]{row - 2, col};
+                        playerPawns[col] = true;
                     }
                 }
-            } else if (player.equals(pieceColor) && row != 0) {
+            } else if (player.equals(pieceColor)) {
                 if (top[row - 1][col].isEmpty() && bottom[row - 1][col].isEmpty()) {
                     moves[index++] = new int[]{row - 1, col};
                 }
-            } else if (!player.equals(pieceColor) && row == 1) {
+            } else if (row == 1) {
                 if (bottom[row + 1][col].isEmpty() && top[row + 1][col].isEmpty()) {
                     moves[index++] = new int[]{row + 1, col};
                     if (bottom[row + 2][col].isEmpty() && top[row + 2][col].isEmpty()) {
                         moves[index++] = new int[]{row + 2, col};
+                        oppPawns[col] = true;
                     }
                 }
             } else {
@@ -48,6 +50,10 @@ class ChessPieces {
                 } else if (col + 1 <= 7 && !bottom[row + 1][col + 1].isEmpty()) {
                     moves[index++] = new int[]{row + 1, col + 1};
                 }
+            }
+            int[][] enpassant = enPassant(top, bottom, playerPawns, oppPawns, row, col, player, pieceColor);
+            for (int[] move : enpassant) {
+                moves[index++] = move;
             }
             return resize(moves, index);
         }
@@ -226,6 +232,30 @@ class ChessPieces {
             }
         }
         return true;
+    }
+
+    protected int[][] enPassant(String[][] top, String[][] bottom, boolean[] playerPawns, boolean[] oppPawns, int pawnRow, int pawnCol, String player, String color){
+        int[][] moves = new int[2][1];
+        int index = 0;
+        int leftCol = pawnCol - 1;
+        int rightCol = pawnCol + 1;
+        if (player.equals(color)) {
+            if (!top[pawnRow][leftCol].isEmpty() && oppPawns[leftCol]){
+                moves[index++] = new int[] {pawnRow-1, leftCol};
+            }
+            else if (!top[pawnRow][rightCol].isEmpty() && oppPawns[rightCol]){
+                moves[index++] = new int[] {pawnRow-1, rightCol};
+            }
+        }
+        else{
+            if (!bottom[pawnRow][leftCol].isEmpty() && playerPawns[leftCol]){
+                moves[index++] = new int[] {pawnRow+1, leftCol};
+            }
+            else if (!bottom[pawnRow][rightCol].isEmpty() && playerPawns[rightCol]){
+                moves[index++] = new int[] {pawnRow+1, rightCol};
+            }
+        }
+        return resize(moves, index);
     }
 
 }

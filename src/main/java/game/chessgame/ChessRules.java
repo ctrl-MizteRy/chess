@@ -26,7 +26,6 @@ class ChessRules {
         this.player = player;
     }
 
-
     protected int[] findKing(String[][] opponent) {
         for (int i = 0; i < opponent.length; i++) {
             for (int j = 0; j < opponent[i].length; j++) {
@@ -41,7 +40,7 @@ class ChessRules {
     protected boolean potentialCheckMate (String pieceColor, int pieceRow, int pieceCol, int oldRow, int oldCol){
         String[][] side = new String[8][];
         String[][] oppSide = new String[8][];
-        setSide(side, oppSide,top, bottom, pieceColor, player);
+        setSide(side, oppSide, pieceColor, player);
 
         side[pieceRow][pieceCol] = side[oldRow][oldCol];
         side[oldRow][oldCol] = "";
@@ -110,7 +109,7 @@ class ChessRules {
         return false;
     }
 
-    protected void setSide (String[][] side, String[][] oppSide, String[][]top, String[][] bottom, String pieceColor, String player){
+    protected void setSide (String[][] side, String[][] oppSide, String pieceColor, String player){
         for (int i = 0; i < 8; i++){
             if (player.equals(pieceColor)){
                 side[i] = java.util.Arrays.copyOf(bottom[i], 8);
@@ -120,6 +119,23 @@ class ChessRules {
                 side[i] = java.util.Arrays.copyOf(top[i], 8);
                 oppSide[i] = java.util.Arrays.copyOf(bottom[i], 8);
             }
+        }
+    }
+
+    protected boolean EnPassant(boolean[] playerPawns, boolean[] oppPawns, int col, String color, String player){
+        if (player.equals(color)){
+            if (playerPawns[col]){
+                playerPawns[col] = false;
+                return true;
+            }
+            else {return false;}
+        }
+        else {
+            if (oppPawns[col]){
+                oppPawns[col] = false;
+                return true;
+            }
+            else {return false;}
         }
     }
 }

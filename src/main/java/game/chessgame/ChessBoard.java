@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 
-
 public class ChessBoard extends Application {
     private final ChessPieces chessMoves = new ChessPieces();
     private boolean firstMove = true, secondMove = false;
@@ -49,6 +48,8 @@ public class ChessBoard extends Application {
     private Stage primaryStage;
     protected Pane pane;
     protected boolean playerSideKingOrigPos = true, oppSideKingOrigPos = true, playerRKing = true, playerRQueen = true, oppRKing = true, oppRQueen = true;
+    protected boolean[] playerPawns = new boolean[8], oppPawns = new boolean[8];
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -229,6 +230,16 @@ public class ChessBoard extends Application {
                     }
                 }
                 castling(player, color, chessPiece, oldRow, oldCol, row, col);
+                if (player.equals(color) && chessPiece.equals("pawn")){
+                    if (top[row+1][col].equals("pawn") && oppPawns[col]){
+                        top[row+1][col] = "";
+                    }
+                }
+                else if (!player.equals(color) && chessPiece.equals("pawn")){
+                    if (bottom[row-1][col].equals("pawn") && playerPawns[col]){
+                        bottom[row-1][col] = "";
+                    }
+                }
                 firstMove = !firstMove;
                 secondMove = !secondMove;
             }
@@ -318,6 +329,7 @@ public class ChessBoard extends Application {
             return null;
         }
     }
+
     private void castling (String player, String color, String chessPiece, int oldRow, int oldCol, int row, int col){
         if (chessPiece.equals("king") && (playerSideKingOrigPos|| oppSideKingOrigPos)){
             if (player.equals(color)) {
@@ -430,7 +442,7 @@ public class ChessBoard extends Application {
             case "bishop" -> chessMoves.Bishop(row, col, top, bottom, color, player);
             case "rook" -> chessMoves.Rook(row, col, top, bottom, color, player);
             case "queen" -> chessMoves.Queen(row, col, top, bottom, color, player);
-            default -> chessMoves.Pawn(row, col, player, top, bottom, color);
+            default -> chessMoves.Pawn(row, col, player, top, bottom, color, playerPawns, oppPawns);
         };
     }
 
