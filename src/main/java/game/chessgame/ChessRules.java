@@ -122,20 +122,4 @@ class ChessRules {
         }
     }
 
-    protected boolean EnPassant(boolean[] playerPawns, boolean[] oppPawns, int col, String color, String player){
-        if (player.equals(color)){
-            if (playerPawns[col]){
-                playerPawns[col] = false;
-                return true;
-            }
-            else {return false;}
-        }
-        else {
-            if (oppPawns[col]){
-                oppPawns[col] = false;
-                return true;
-            }
-            else {return false;}
-        }
-    }
 }
