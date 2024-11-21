@@ -160,9 +160,6 @@ public class ChessBoard extends Application {
             else if(color.equals("white") && firstMove){
                 highlightMoves(oldRow, oldCol, chessPiece, color);
             }
-
-            System.out.println(color);
-            System.out.println(chessPiece);
         });
 
         img.setOnMouseDragged(event ->{
@@ -214,7 +211,6 @@ public class ChessBoard extends Application {
                     piece.getChildren().remove(img);
                     destination.getChildren().add(img);
                 }
-                System.out.println("Dropping off: " + row + " " + col);
                 if (player.equals("white")) {
                     if (color.equals("white")) {
                         bottom[row][col] = bottom[oldRow][oldCol];
@@ -256,6 +252,7 @@ public class ChessBoard extends Application {
             }
         }
     }
+
     private void checkPromotion( String color, int row, int col){
         if (player.equals(color)){
             if (row == 0){
@@ -288,8 +285,6 @@ public class ChessBoard extends Application {
             img.setFitHeight(25);
             img.setPickOnBounds(true);
             img.setOnMouseClicked(_-> {
-                    firstMove = !firstMove;
-                    secondMove = !secondMove;
                     String[][] side = (player.equals(color))? bottom : top;
                     side[row][col] = switch(num) {
                         case 0 -> "rook";
@@ -297,6 +292,7 @@ public class ChessBoard extends Application {
                         case 2 -> "bishop";
                         default -> "queen";
                     };
+                    startGame();
             });
             stack.getChildren().add(rec);
             stack.getChildren().add(img);
