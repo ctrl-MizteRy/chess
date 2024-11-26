@@ -1,5 +1,6 @@
 package game.chessgame;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.application.Application;
@@ -98,6 +99,27 @@ public class ChessBoard extends Application {
         primaryStage.centerOnScreen();
     }
 
+    private void endGame(String color){
+        StackPane endPane = new StackPane();
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        String winner = (player.equals(color)? opp : player).toUpperCase();
+        Label label = new Label(STR."\{winner} won!");
+        Button exit = new Button("Exit");
+        exit.setOnAction(_ -> {
+            Platform.exit();
+        });
+        label.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 30));
+        grid.add(label, 0, 0);
+        grid.add(exit, 0, 1);
+        grid.setAlignment(Pos.CENTER);
+        endPane.getChildren().add(grid);
+        pane = endPane;
+        Scene scene = new Scene(pane, 350, 350);
+        primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
+    }
     private void checkSide(String player){
         if (player.equals("black")){
             String tempPiece = top[0][3];
@@ -149,7 +171,6 @@ public class ChessBoard extends Application {
         String[] pieceColor = ((Label) piece.getChildren().get(2)).textProperty().getValue().split(" ");
         String color = pieceColor[0];
         String chessPiece = pieceColor[1];
-
 
         img.setOnMousePressed(event ->{
             offset[0] = event.getX();
@@ -242,11 +263,16 @@ public class ChessBoard extends Application {
                 }
                 firstMove = !firstMove;
                 secondMove = !secondMove;
+                img.setLayoutX(0);
+                img.setLayoutY(0);
+                startGame();
+            }
+            else {
+                if (!rules.isCheckMate(player, color)){
+                    endGame(color);
+                }
             }
         }
-        img.setLayoutX(0);
-        img.setLayoutY(0);
-        startGame();
     }
 
     private void checkPawn(){
